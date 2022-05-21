@@ -1,5 +1,8 @@
 module EarthDataPlots
 
-# Write your package code here.
+using YAXArrays
+using Makie
+import Makie
+include("recipes.jl")
 
 end
