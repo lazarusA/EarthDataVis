@@ -18,7 +18,9 @@ Creates a plot as cube. Several options are available via Attributes..
         yname=:lat,
         tname=:time,
         varname=nothing,
-        colormap=:Hiroshige
+        colormap=:Hiroshige,
+        color = nothing,
+        levels = 50,
     )
 end
 
@@ -34,15 +36,15 @@ function Makie.plot!(dcp::DataCubePlot{<:Tuple{<:YAXArray}})
     t = @lift(1:size(getproperty($dset, tname), 1))
     d = @lift($dset[variable=String($varname)].data[:, :, :])
     if dcp[:kind][] == :contour
-        contour!(dcp, t, y, z, d; colormap=dcp.colormap[])
+        contour!(dcp, t, y, z, d; colormap=dcp.colormap[], levels = dcp.levels[])
     elseif dcp[:kind][] == :volume
         volume!(dcp, t, y, z, d; colormap=dcp.colormap[])
     elseif dcp[:kind][] == :voxel
         ps = @lift([Point3f(i,j,k) for i in $t, j in $y for k in $z])
-        meshscatter!(dcp, ps; color=@lift(vec($d)),
+        meshscatter!(dcp, ps; color= isnothing(dcp.color[]) ? @lift(vec($d)) : dcp.color[],
             colormap=dcp.colormap[],
             marker = Rect3f(Vec3f(-0.5), Vec3f(1)),
-            markersize = 1, # this needs to be calculated dynamically fron t,y,z.
+            markersize = 1, # this needs to be calculated dynamically from t,y,z.
             )
     end
     return dcp
