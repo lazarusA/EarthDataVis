@@ -1,5 +1,5 @@
 # EarthDataPlots
-WIP: Adding features on request :D
+WIP: More features will come soon!
 
 ## Installation
 
@@ -32,6 +32,14 @@ axlist = [
 data = rand(length(dates), 15, 20, 2)
 dsarr = YAXArray(axlist, data)
 ```
+```
+YAXArray with the following dimensions
+time                Axis with 31 Elements from 2021-01-01 to 2021-01-31
+lon                 Axis with 15 Elements from 1.0 to 10.0
+lat                 Axis with 20 Elements from 1.0 to 15.0
+Variable            Axis with 2 elements: var1 var2
+Total size: 145.31 KB
+```
 
 Then, plotting our first cube is done with
 
@@ -46,6 +54,9 @@ Currently, 3 options are supported, :volume, :contour and :voxel. In the
 :voxel mode you can pass also an array of RGB color per box.
 
 ```julia
+ # some rgb colors also per data point.
+rgb = [RGBA(rand(3)...,) for r in 1:length(dates), g in 1:15, b in 1:20]
+
 fig = with_theme(theme_dark()) do
     fig = Figure(resolution = (1400, 1200))
     axs = [LScene(fig[i,j]; show_axis = false) for i in 1:2 for j in 1:2]
@@ -59,4 +70,4 @@ save("./imgs/simpleVCVrgb.png", fig)
 ```
 <img src="./imgs/simpleVCVrgb.png" width = "100%">
 
-More features will come soon!
+### Acknowledgements
