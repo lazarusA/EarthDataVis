@@ -14,6 +14,11 @@ pkg> add https://github.com/lazarusA/EarthDataPlots.git
 using EarthDataPlots, GLMakie
 ```
 
+- Current functions:
+  - datacubeplot (for 3d: volume, contour and voxel)
+  - mapplot (for 2d maps: heatmap, contour, scatter)
+  - sphereplot (for 3d plots: surface and mesh)
+
 Note, that you will also need GLMakie in order to create the plots. And,
 since the recipes are designed to work with lazy loading from YAXArrays
 we will need input in that format.
