@@ -56,7 +56,24 @@ Currently, 3 options are supported, :volume, :contour and :voxel. In the
 ```julia
  # some rgb colors also per data point.
 rgb = [RGBA(rand(3)...,) for r in 1:length(dates), g in 1:15, b in 1:20]
+```
 
+```julia
+fig = with_theme(theme_dark()) do
+    fig = Figure(resolution=(1400, 1200))
+    axs = [Axis3(fig[i, j]; perspectiveness=0.5f0, azimuth=1.275π * 1.77) for i in 1:2 for j in 1:2]
+    for (k, kind) in enumerate([:volume, :contour, :voxel])
+        datacubeplot!(axs[k], dsarr; kind, axvals=:vals)
+    end
+    datacubeplot!(axs[4], dsarr; kind=:voxel, axvals=:vals, color=vec(rgb))
+    fig
+end
+
+save("../imgs/simpleVCVrgb_axis3.png", fig)
+```
+<img src="./imgs/simpleVCVrgb_axis3.png" width = "100%">
+
+```julia
 fig = with_theme(theme_dark()) do
     fig = Figure(resolution = (1400, 1200))
     axs = [LScene(fig[i,j]; show_axis = false) for i in 1:2 for j in 1:2]
