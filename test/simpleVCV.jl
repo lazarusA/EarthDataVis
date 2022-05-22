@@ -12,8 +12,7 @@ axlist = [
 data = rand(length(dates), 15, 20, 2)
 dsarr = YAXArray(axlist, data)
 # some rgb colors also per data point.
-rgb = [RGBA(rand()*r/length(dates), rand()*g/15, rand()*b/20,0.5)
-    for r in 1:length(dates), g in 1:15, b in 1:20];
+rgb = [RGBA(rand(3)...,) for r in 1:length(dates), g in 1:15, b in 1:20];
 
 datacubeplot(dsarr; kind=:voxel, colormap=:linear_bmy_10_95_c71_n256)
 save("../imgs/voxel.png", current_figure())
