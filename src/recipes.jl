@@ -173,7 +173,7 @@ sphereplot(ds::YAXArray)
 Creates a map plot. Several options are available via Attributes..
 
 ## Attributes
-- `kind = :surface`: possible options, surface, meshscatter and maybe mesh?
+- `kind = :mesh`: possible options, surface, meshscatter and maybe mesh?
 - `xname = :lon`: this should usually be longitude
 - `yname = :lat`: this should usually be latitude
 - `timeindex = "xxxx-xx-xx`: Date format, i.e., "2002-01-29"
@@ -183,10 +183,13 @@ Creates a map plot. Several options are available via Attributes..
 - `markersize=nothing`
 - `shading=false`
 - `transparency=false`
+- `omesh = Point3f(0)`: origin mesh sphere
+- `radius = 1`: Sphere radius
+- `tess = 64`: Sphere Tesselation
 """
 @recipe(SpherePlot, yaxarray) do scene
     Attributes(;
-        kind=:surface,
+        kind=:mesh,
         xname=:lon,
         yname=:lat,
         timestep=nothing,
@@ -195,7 +198,10 @@ Creates a map plot. Several options are available via Attributes..
         color=nothing,
         markersize=nothing,
         shading=false,
-        transparency=false
+        transparency=false,
+        omesh = Point3f(0),
+        radius=1,
+        tess=64
     )
 end
 function toCartesian(lon, lat; r=1, cxyz=(0, 0, 0))
@@ -205,7 +211,7 @@ function toCartesian(lon, lat; r=1, cxyz=(0, 0, 0))
     return (x, y, z)
 end
 function lonlat3D(lon, lat, data; cxyz=(0, 0, 0))
-    xyzw = zeros(size(data)...,3)
+    xyzw = zeros(size(data)..., 3)
     for (i, lon) in enumerate(lon), (j, lat) in enumerate(lat)
         x, y, z = toCartesian(lon, lat; cxyz=cxyz)
         xyzw[i, j, 1] = x
@@ -213,6 +219,9 @@ function lonlat3D(lon, lat, data; cxyz=(0, 0, 0))
         xyzw[i, j, 3] = z
     end
     return xyzw
+end
+function SphereTess(; o=Point3f(0), r=1, tess=64)
+    return uv_normal_mesh(Tesselation(Sphere(o, r), tess))
 end
 function Makie.plot!(p::SpherePlot{<:Tuple{<:YAXArray}})
     dset = p[:yaxarray]
@@ -233,12 +242,17 @@ function Makie.plot!(p::SpherePlot{<:Tuple{<:YAXArray}})
         lonext = @lift(vcat(collect($lon), $lon[1]))
         dext = @lift([$d; $d[1, :]'])
         xyz = lift(lonext, lat, dext) do lonext, lat, dext
-            lonlat3D(lonext,lat, dext)
+            lonlat3D(lonext, lat, dext)
         end
         surface!(p, @lift($xyz[:, :, 1]), @lift($xyz[:, :, 2]), @lift($xyz[:, :, 3]);
             color=dext, colormap=p.colormap[],
-            transparency=p.transparency[])
-        #heatmap!(p, lon, lat, d)
+            transparency=p.transparency[],
+            shading=p.shading[])
+    elseif p[:kind][] == :mesh
+        mesh!(p, SphereTess(; o=p.omesh[], r=p.radius[], tess=p.tess[]);
+            color=@lift(transpose($d)), colormap=p.colormap[],
+            transparency=p.transparency[],
+            shading=p.shading[])
     end
     return p
 end
