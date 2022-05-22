@@ -23,6 +23,7 @@ rgb = [RGBA(rand(3)...,) for r in 1:length(dates), g in 1:15, b in 1:20];
 
 
 datacubeplot(dsarr; kind=:voxel, axvals=:vals_tscale,
+    varname = "var1",
     colormap=:linear_bmy_10_95_c71_n256)
 
 datacubeplot(dsarr; kind=:voxel, axvals=:vals,
@@ -52,5 +53,7 @@ fig = with_theme(theme_dark()) do
     datacubeplot!(axs[4], dsarr; kind=:voxel, color=vec(rgb))
     fig
 end
+
+mapplot(dsarr; kind=:scatter)
 
 save("../imgs/simpleVCVrgb.png", fig)
