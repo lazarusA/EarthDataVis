@@ -199,7 +199,7 @@ Creates a map plot. Several options are available via Attributes..
         markersize=nothing,
         shading=false,
         transparency=false,
-        omesh = Point3f(0),
+        omesh=Point3f(0),
         radius=1,
         tess=64
     )
@@ -255,4 +255,26 @@ function Makie.plot!(p::SpherePlot{<:Tuple{<:YAXArray}})
             shading=p.shading[])
     end
     return p
+end
+
+"""
+namesplot(ds::YAXArray)
+
+Creates a map plot. Several options are available via Attributes..
+
+## Attributes
+- `kind = :tree`: possible options, surface, meshscatter and maybe mesh?
+- `colormap=:Hiroshige`
+- `color=nothing`: voxel colors
+- `markersize=nothing`
+- `transparency=false`
+"""
+@recipe(NamesPlot, yaxarray) do scene
+    Attributes(;
+        kind=:tree,
+        colormap=:Hiroshige,
+        color=nothing,
+        markersize=nothing,
+        transparency=false,
+    )
 end
