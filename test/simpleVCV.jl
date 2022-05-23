@@ -1,4 +1,4 @@
-using EarthDataPlots
+using EarthDataVis
 using GLMakie, YAXArrays, Dates
 using Colors
 using YAXArrayBase

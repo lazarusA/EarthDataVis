@@ -1,17 +1,17 @@
-# EarthDataPlots
+# EarthDataVis
 WIP: More features will come soon!
 
 ## Installation
 
 ```julia
 julia>]
-pkg> add https://github.com/lazarusA/EarthDataPlots.git
+pkg> add https://github.com/lazarusA/EarthDataVis.git
 ```
 
 ## Quick start
 
 ```julia
-using EarthDataPlots, GLMakie
+using EarthDataVis, GLMakie
 ```
 
 - Current functions:

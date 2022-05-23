@@ -1,4 +1,4 @@
-name = "EarthDataPlots"
+name = "EarthDataVis"
 uuid = "92ee0fea-5dc1-4a7b-a09a-86caf167ee93"
 authors = ["lazarusA <lazarus.alon@gmail.com> and contributors"]
 version = "0.1.0"

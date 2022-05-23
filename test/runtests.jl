@@ -1,4 +1,4 @@
-using EarthDataPlots
+using EarthDataVis
 using Test
 
 @testset "EarthDataPlots.jl" begin

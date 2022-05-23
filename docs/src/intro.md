@@ -1,9 +1,9 @@
 # Introduction
 
-Since EarthDataPlots requires YAXArrays and GLMakie, we also install those and start using them as follows:
+Since EarthDataVis requires YAXArrays and GLMakie, we also install those and start using them as follows:
 
 ```julia
-using EarthDataPlots, GLMakie, YAXArrays, Dates
+using EarthDataVis, GLMakie, YAXArrays, Dates
 ```
 
 First, let's start by creating some test data for EDP.

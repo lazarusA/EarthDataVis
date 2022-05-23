@@ -1,4 +1,4 @@
-module EarthDataPlots
+module EarthDataVis
 
 using YAXArrays
 using Makie
