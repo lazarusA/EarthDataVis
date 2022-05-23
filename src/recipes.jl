@@ -278,3 +278,10 @@ Creates a map plot. Several options are available via Attributes..
         transparency=false,
     )
 end
+function Makie.plot!(p::NamesPlot{<:Tuple{<:YAXArray}})
+    dset = p[:yaxarray]
+    allnames = YAXArrayBase.dimnames(dset[])
+    s = length(allnames)
+    text!(p, [String.(allnames)...], position=@.(Point2f(1:s, 0)),
+        align = (:center, :center), color = rand(RGB, s))
+end

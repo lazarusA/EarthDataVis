@@ -1,6 +1,7 @@
 using EarthDataPlots
 using GLMakie, YAXArrays, Dates
 using Colors
+using YAXArrayBase
 
 # fake data
 dates = Date(2021, 1, 1):Day(1):Date(2021, 1, 31)
@@ -11,6 +12,11 @@ axlist = [
     CategoricalAxis("Variable", ["var1", "var2"])]
 data = rand(length(dates), 15, 20, 2)
 dsarr = YAXArray(axlist, data)
+
+allnames = YAXArrayBase.dimnames(dsarr)
+
+namesplot(dsarr)
+
 # some rgb colors also per data point.
 rgb = [RGBA(rand(3)...,) for r in 1:length(dates), g in 1:15, b in 1:20];
 
@@ -23,7 +29,7 @@ rgb = [RGBA(rand(3)...,) for r in 1:length(dates), g in 1:15, b in 1:20];
 
 
 datacubeplot(dsarr; kind=:voxel, axvals=:vals_tscale,
-    varname = "var1",
+    varname="var1",
     colormap=:linear_bmy_10_95_c71_n256)
 
 datacubeplot(dsarr; kind=:voxel, axvals=:vals,
