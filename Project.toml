@@ -9,6 +9,7 @@ Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 YAXArrays = "c21b50f5-aa40-41ea-b809-c0f5e47bfa5c"
 
 [compat]
+GeometryBasics = "0.4"
 Makie = "0.17"
 YAXArrays = "0.2"
 julia = "1"
