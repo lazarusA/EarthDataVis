@@ -8,3 +8,4 @@ heatmap(dsarr.lon.values, dsarr.lat.values,
 mapplot(dsarr)
 sphereplot(dsarr; kind = :mesh, varname=:ETOPO1avg)
 mapplot(dsarr; kind=:contour, varname=:ETOPO1avg)
+bar3dplot(dsarr; varname=:ETOPO1avg, scalez = 1/100)

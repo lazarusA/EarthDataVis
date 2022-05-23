@@ -285,3 +285,66 @@ function Makie.plot!(p::NamesPlot{<:Tuple{<:YAXArray}})
     text!(p, [String.(allnames)...], position=@.(Point2f(1:s, 0)),
         align = (:center, :center), color = rand(RGB, s))
 end
+
+"""
+bar3dplot(ds::YAXArray)
+
+Creates a plot as cube. Several options are available via Attributes..
+
+## Attributes
+- `xname = :lon`: this should usually be longitude
+- `yname = :lat`: this should usually be latitude
+- `tname = :time`
+- `varname = nothing `: Don't forget to pass your own
+- `colormap=:Hiroshige`
+- `color=nothing`: bar's colors
+- `scalez=nothing`
+- `markersize=nothing`
+- `shading=false`
+- `transparency=false`
+"""
+@recipe(Bar3dPlot, yaxarray) do scene
+    Attributes(;
+        xname=:lon,
+        yname=:lat,
+        tname=:time,
+        varname=nothing,
+        colormap=:Hiroshige,
+        color=nothing,
+        scalez=1,
+        markersize=nothing,
+        shading=false,
+        transparency=false
+    )
+end
+
+function Makie.plot!(p::Bar3dPlot{<:Tuple{<:YAXArray}})
+    dset = p[:yaxarray]
+    xname = p[:xname][]
+    yname = p[:yname][]
+    varname = isnothing(p[:varname][]) ? @lift(first($dset.Variable.values)) : p[:varname]
+    lon = @lift(getproperty($dset, xname).values)
+    lat = @lift(getproperty($dset, yname).values)
+
+    if :time in propertynames(dset)
+        timestep = isnothing(p[:timestep]) ? @lift(first($dset.time.values)) : p[:timestep]
+        d = @lift($dset[time=Date($timestep), variable=String($varname)].data[:, :])
+    else
+        d = @lift(replace($dset[variable=String($varname)].data[:, :], missing => NaN))
+    end
+
+    δx = @lift(abs($lon[2] - $lon[1]))
+    δy = @lift(abs($lat[2] - $lat[1]))
+    ps = @lift([Point3f(i, j, 0.1*rand()) for i in $lon for j in $lat]) # fix z close to zero
+    pixval = @lift([$d[i, j] for (i, _) in enumerate($lon) for (j, _) in enumerate($lat)])
+    ms = @lift(Vec3f.($δx - 0.05 * $δx, $δy - 0.05 * $δy, $pixval * p[:scalez][]))
+
+    meshscatter!(p, ps; color=isnothing(p.color[]) ? pixval : p.color[],
+        colormap=p.colormap[],
+        marker=Rect3f(Vec3f(-0.5, -0.5, 0.0), Vec3f(1)),
+        markersize= isnothing(p.markersize[]) ? ms : p.markersize[],
+        shading=p.shading[],
+        transparency=p.transparency[]
+    )
+    return p
+end
