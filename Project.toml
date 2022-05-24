@@ -13,6 +13,7 @@ YAXArrays = "c21b50f5-aa40-41ea-b809-c0f5e47bfa5c"
 [compat]
 GeometryBasics = "0.4"
 Makie = "0.17"
+YAXArrayBase = "0.3"
 YAXArrays = "0.2"
 julia = "1"
 
