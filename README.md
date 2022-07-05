@@ -92,4 +92,52 @@ save("./imgs/simpleVCVrgb.png", fig)
 ```
 <img src="./imgs/simpleVCVrgb.png" width = "100%">
 
+Featuring geo-data
+
+### Data cube
+
+```julia
+using EarthDataVis
+using GLMakie, YAXArrays, Dates, NetCDF
+using Colors
+# a .nc file in your data folder
+dsarrC = Cube("./data/34JBM1608_2017-06.nc")
+
+fig = Figure(resolution = (800,800))
+ax = Axis3(fig[1,1], aspect = (1,1,1), perspectiveness= 0.5)
+datacubeplot!(ax, dsarrC; kind=:voxel, xname = :longitude, yname = :latitude,
+    axvals=:vals, varname="ndvi_target", shading = false,
+    colormap=:fastie, colorrange=(-1,1))
+fig
+```
+<img src="./imgs/realcube.png" width = "100%">
+
+### Global 3d options
+
+```julia
+using EarthDataVis
+using GLMakie, YAXArrays, Dates, NetCDF
+using Colors
+# a .nc file in your data folder
+dsarr = Cube("./data/ETOPO1_halfdegree.nc")
+mapplot(dsarr)
+```
+<img src="./imgs/mapplot.png" width = "100%">
+
+```julia
+sphereplot(dsarr; kind = :mesh, varname=:ETOPO1avg)
+```
+<img src="./imgs/sphereplot.png" width = "100%">
+
+```julia
+mapplot(dsarr; kind=:contour, varname=:ETOPO1avg)
+```
+<img src="./imgs/mapplot_contour.png" width = "100%">
+
+```julia
+bar3dplot(dsarr; varname=:ETOPO1avg, scalez = 1/100)
+```
+<img src="./imgs/bar3dplot.png" width = "100%">
+
 ### Acknowledgements
+DeepCube
