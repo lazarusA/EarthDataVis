@@ -92,7 +92,7 @@ save("./imgs/simpleVCVrgb.png", fig)
 ```
 <img src="./imgs/simpleVCVrgb.png" width = "100%">
 
-Featuring geo-data
+## Featuring geo-data
 
 ### Data cube
 
