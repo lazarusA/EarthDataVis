@@ -40,6 +40,7 @@ Creates a plot as cube. Several options are available via Attributes..
         tname=:time,
         varname=nothing,
         colormap=:Hiroshige,
+        colorrange=nothing,
         color=nothing,
         levels=50,
         axvals=:counts, # be careful with your axis values, :vals is the only one showing the original data
@@ -78,20 +79,21 @@ function Makie.plot!(p::DataCubePlot{<:Tuple{<:YAXArray}})
 
     if p[:kind][] == :contour
         contour!(p, t, y, z, d; colormap=p.colormap[], levels=p.levels[],
-            shading=p.shading[],
+            shading=p.shading[], colorrange = p.colorrange[],
             transparency=p.transparency[]
         )
     elseif p[:kind][] == :volume
-        volume!(p, t, y, z, d; colormap=p.colormap[])
+        volume!(p, t, y, z, d; colormap=p.colormap[], colorrange = p.colorrange[])
     elseif p[:kind][] == :voxel
-        ps = @lift([Point3f(i, j, k) for i in $t, j in $y for k in $z])
+        ps = @lift([Point3f(i, j, k) for i in $t for j in $y for k in $z])
         colorvals = @lift([$d[i, j, k] for (i, _) in enumerate($t) for (j, _) in enumerate($y) for (k, _) in enumerate($z)])
         meshscatter!(p, ps; color=isnothing(p.color[]) ? colorvals : p.color[],
             colormap=p.colormap[],
             marker=Rect3f(Vec3f(-0.5), Vec3f(1)),
             markersize=isnothing(p.markersize[]) ? ms : p.markersize[],
             shading=p.shading[],
-            transparency=p.transparency[]
+            transparency=p.transparency[],
+            colorrange = p.colorrange[]
         )
     end
     return p
