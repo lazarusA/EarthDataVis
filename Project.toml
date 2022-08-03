@@ -14,7 +14,7 @@ YAXArrays = "c21b50f5-aa40-41ea-b809-c0f5e47bfa5c"
 Colors = "0.12"
 GeometryBasics = "0.4"
 Makie = "0.17"
-YAXArrayBase = "0.3, 0.4"
+YAXArrayBase = "0.3, 0.4, 0.5"
 YAXArrays = "0.2, 0.3"
 julia = "1"
 
