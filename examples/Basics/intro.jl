@@ -2,8 +2,8 @@
 
 using EarthDataVis, GLMakie
 using YAXArrays, Dates, Colors
-
-# Then, first let's start by creating some test data for EDV.
+GLMakie.activate!()
+## Then, first let's start by creating some test data for EDV.
 
 dates = Date(2021, 1, 1):Day(1):Date(2021, 1, 31)
 axlist = [
@@ -14,7 +14,7 @@ axlist = [
 data = rand(length(dates), 15, 20, 2)
 dsarr = YAXArray(axlist, data)
 
-# And plotting our first cube is done with
+## And plotting our first cube is done with
 
 datacubeplot(dsarr; kind=:voxel, colormap=:linear_bmy_10_95_c71_n256)
 

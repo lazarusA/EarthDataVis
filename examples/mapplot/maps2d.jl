@@ -1,7 +1,7 @@
 ## Single line 
 
 using EarthDataVis
-using GLMakie, YAXArrays
+using YAXArrays
 using CairoMakie
 CairoMakie.activate!(type = "svg") #hide
 ## a .nc file in your data folder
