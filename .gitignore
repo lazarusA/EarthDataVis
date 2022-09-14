@@ -1,5 +1,10 @@
-/Manifest.toml
-.vscode/settings.json
+Manifest.toml
+generated
+build
+.vscode
 .DS_Store
-/test/Manifest.toml
-/test/.vscode/settings.json
+
+docs/docs
+docs/site
+
+
