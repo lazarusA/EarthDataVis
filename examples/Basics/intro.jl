@@ -17,7 +17,7 @@ dsarr = YAXArray(axlist, data)
 
 # And plotting our first cube is done with
 
-datacubeplot(dsarr; kind=:voxel, colormap=:linear_bmy_10_95_c71_n256)
+plotcube(dsarr; kind=:voxel, colormap=:linear_bmy_10_95_c71_n256)
 
-# using `datacubeplot` will generate a cube for one of the variables in `dsarr`. 
+# using `plotcube` will generate a cube for one of the variables in `dsarr`. 
 # Note that different options are available. We will take a look at one of them.
