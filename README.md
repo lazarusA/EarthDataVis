@@ -1,7 +1,7 @@
 # EarthDataVis 🌎 🌍 🌏
 
 [![Project Status: Active – The project is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)]()
+[![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://lazarusa.github.io/EarthDataVis/dev/)
 
 ## Installation
 

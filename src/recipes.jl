@@ -1,5 +1,5 @@
 """
-datacubeplot(ds::YAXArray)
+plotcube(ds::YAXArray)
 
 Creates a plot as cube. Several options are available via Attributes..
 
@@ -11,28 +11,13 @@ Creates a plot as cube. Several options are available via Attributes..
 - `varname = nothing `: Don't forget to pass your own
 - `colormap=:Hiroshige`
 - `color=nothing`: voxel colors
-- `levels=50`: contour levels
+- `levels=40`: contour levels
 - `axvals=:counts`: axis values by :counts, :vals and :vals_tscale
-- `markersize=nothing`
+- `markersize=1`
 - `shading=false`
 - `transparency=false`
 """
-@recipe(DataCubePlot, yaxarray) do scene
-    #=
-    Theme(
-        Axis3=(
-            zlabelrotation=0π,
-            xlabeloffset=50,
-            ylabeloffset=55,
-            zlabeloffset=70,
-            xgridcolor=(:black, 0.07),
-            ygridcolor=(:black, 0.07),
-            zgridcolor=(:black, 0.07),
-            perspectiveness=0.5f0,
-            azimuth=1.275π * 1.77,
-        )
-    )
-    =#
+@recipe(PlotCube, yaxarray) do scene
     Attributes(;
         kind=:volume,
         xname=:lon,
@@ -40,9 +25,9 @@ Creates a plot as cube. Several options are available via Attributes..
         tname=:time,
         varname=nothing,
         colormap=:Hiroshige,
-        colorrange=nothing,
+        #colorrange=(0, 1),
         color=nothing,
-        levels=50,
+        levels=40,
         axvals=:counts, # be careful with your axis values, :vals is the only one showing the original data
         markersize=nothing,
         shading=false,
@@ -50,7 +35,7 @@ Creates a plot as cube. Several options are available via Attributes..
     )
 end
 
-function Makie.plot!(p::DataCubePlot{<:Tuple{<:YAXArray}})
+function Makie.plot!(p::PlotCube{<:Tuple{<:YAXArray}})
     dset = p[:yaxarray]
     xname = p[:xname][]
     yname = p[:yname][]
@@ -79,11 +64,14 @@ function Makie.plot!(p::DataCubePlot{<:Tuple{<:YAXArray}})
 
     if p[:kind][] == :contour
         contour!(p, t, y, z, d; colormap=p.colormap[], levels=p.levels[],
-            shading=p.shading[], colorrange = p.colorrange[],
+            shading=p.shading[], 
+            #colorrange = p.colorrange[],
             transparency=p.transparency[]
         )
     elseif p[:kind][] == :volume
-        volume!(p, t, y, z, d; colormap=p.colormap[], colorrange = p.colorrange[])
+        volume!(p, t, y, z, d; colormap=p.colormap[], 
+            #colorrange = p.colorrange[]
+            )
     elseif p[:kind][] == :voxel
         ps = @lift([Point3f(i, j, k) for i in $t for j in $y for k in $z])
         colorvals = @lift([$d[i, j, k] for (i, _) in enumerate($t) for (j, _) in enumerate($y) for (k, _) in enumerate($z)])
@@ -93,14 +81,14 @@ function Makie.plot!(p::DataCubePlot{<:Tuple{<:YAXArray}})
             markersize=isnothing(p.markersize[]) ? ms : p.markersize[],
             shading=p.shading[],
             transparency=p.transparency[],
-            colorrange = p.colorrange[]
+            #colorrange = p.colorrange[]
         )
     end
     return p
 end
 
 """
-mapplot(ds::YAXArray)
+plotmap(ds::YAXArray)
 
 Creates a map plot. Several options are available via Attributes..
 
@@ -117,7 +105,7 @@ Creates a map plot. Several options are available via Attributes..
 - `shading=false`
 - `transparency=false`
 """
-@recipe(MapPlot, yaxarray) do scene
+@recipe(PlotMap, yaxarray) do scene
     Attributes(;
         kind=:heatmap,
         xname=:lon,
@@ -134,7 +122,7 @@ Creates a map plot. Several options are available via Attributes..
         mspace=:data # markerspace
     )
 end
-function Makie.plot!(p::MapPlot{<:Tuple{<:YAXArray}})
+function Makie.plot!(p::PlotMap{<:Tuple{<:YAXArray}})
     dset = p[:yaxarray]
     xname = p[:xname][]
     yname = p[:yname][]
@@ -142,12 +130,18 @@ function Makie.plot!(p::MapPlot{<:Tuple{<:YAXArray}})
 
     y = @lift(getproperty($dset, xname).values)
     z = @lift(getproperty($dset, yname).values)
-    if :time in propertynames(dset)
-        timestep = isnothing(p[:timestep]) ? @lift(first($dset.time.values)) : p[:timestep]
-        d = @lift($dset[time=Date($timestep), variable=String($varname)].data[:, :])
-    else
-        d = @lift(replace($dset[variable=String($varname)].data[:, :], missing => NaN))
+    timestep = isnothing(p.timestep[]) ? @lift(first($dset.time.values)) : p.timestep[]
+    d = @lift($dset[time=Date($timestep), variable=String($varname)].data[:, :]) 
+    #=
+    begin
+        if :time in propertynames(dset)
+            timestep = isnothing(p[:timestep]) ? @lift(first($dset.time.values)) : p[:timestep]
+            return @lift($dset[time=Date($timestep), variable=String($varname)].data[:, :])
+        else
+            return @lift($dset[variable=String($varname)].data[:, :])
+        end
     end
+    =#
     ms = @lift(Vec2f($y[2] - $y[1], $z[2] - $z[1]))
 
     if p[:kind][] == :heatmap
@@ -170,7 +164,7 @@ function Makie.plot!(p::MapPlot{<:Tuple{<:YAXArray}})
 end
 
 """
-sphereplot(ds::YAXArray)
+plotsphere(ds::YAXArray)
 
 Creates a map plot. Several options are available via Attributes..
 
@@ -189,7 +183,7 @@ Creates a map plot. Several options are available via Attributes..
 - `radius = 1`: Sphere radius
 - `tess = 64`: Sphere Tesselation
 """
-@recipe(SpherePlot, yaxarray) do scene
+@recipe(PlotSphere, yaxarray) do scene
     Attributes(;
         kind=:mesh,
         xname=:lon,
@@ -225,7 +219,7 @@ end
 function SphereTess(; o=Point3f(0), r=1, tess=64)
     return uv_normal_mesh(Tesselation(Sphere(o, r), tess))
 end
-function Makie.plot!(p::SpherePlot{<:Tuple{<:YAXArray}})
+function Makie.plot!(p::PlotSphere{<:Tuple{<:YAXArray}})
     dset = p[:yaxarray]
     xname = p[:xname][]
     yname = p[:yname][]
@@ -233,14 +227,14 @@ function Makie.plot!(p::SpherePlot{<:Tuple{<:YAXArray}})
 
     lon = @lift(getproperty($dset, xname).values)
     lat = @lift(getproperty($dset, yname).values)
-    if :time in propertynames(dset)
-        timestep = isnothing(p[:timestep]) ? @lift(first($dset.time.values)) : p[:timestep]
-        d = @lift($dset[time=Date($timestep), variable=String($varname)].data[:, :])
-    else
-        d = @lift(replace($dset[variable=String($varname)].data[:, :], missing => NaN))
-    end
+    #if :time in propertynames(dset)
+    timestep = isnothing(p.timestep[]) ? @lift(first($dset.time.values)) : p.timestep[]
+    d = @lift($dset[time=Date($timestep), variable=String($varname)].data[:, :])
+    #else
+    #    d = @lift(replace($dset[variable=String($varname)].data[:, :], missing => NaN))
+    #end
 
-    if p[:kind][] == :surface
+    if p[:kind][] == :surface_c
         lonext = @lift(vcat(collect($lon), $lon[1]))
         dext = @lift([$d; $d[1, :]'])
         xyz = lift(lonext, lat, dext) do lonext, lat, dext
@@ -250,6 +244,21 @@ function Makie.plot!(p::SpherePlot{<:Tuple{<:YAXArray}})
             color=dext, colormap=p.colormap[],
             transparency=p.transparency[],
             shading=p.shading[])
+    elseif p[:kind][] == :surface
+        #lonext = @lift(vcat(collect($lon), $lon[1]))
+        #dext = @lift([$d; $d[1, :]'])
+        xyz = lift(lon, lat, d) do lon, lat, d
+            lonlat3D(lon, lat, d)
+        end
+        mesh!(p, SphereTess(; o=p.omesh[], r=p.radius[], tess=p.tess[]);
+            color= isnothing(p.color[]) ? (:grey, 0.5) : p.color[],
+            transparency= true, #p.transparency[],
+            #shading=p.shading[]
+            )
+        surface!(p, @lift($xyz[:, :, 1]), @lift($xyz[:, :, 2]), @lift($xyz[:, :, 3]);
+            color=d, colormap=p.colormap[],
+            transparency=p.transparency[],
+            shading=p.shading[])     
     elseif p[:kind][] == :mesh
         mesh!(p, SphereTess(; o=p.omesh[], r=p.radius[], tess=p.tess[]);
             color=@lift(transpose($d)), colormap=p.colormap[],
@@ -289,7 +298,7 @@ function Makie.plot!(p::NamesPlot{<:Tuple{<:YAXArray}})
 end
 
 """
-bar3dplot(ds::YAXArray)
+plotbars3d(ds::YAXArray)
 
 Creates a plot as cube. Several options are available via Attributes..
 
@@ -297,6 +306,7 @@ Creates a plot as cube. Several options are available via Attributes..
 - `xname = :lon`: this should usually be longitude
 - `yname = :lat`: this should usually be latitude
 - `tname = :time`
+- `timestep = "xxxx-xx-xx`: Date format, i.e., "2002-01-29"
 - `varname = nothing `: Don't forget to pass your own
 - `colormap=:Hiroshige`
 - `color=nothing`: bar's colors
@@ -305,11 +315,12 @@ Creates a plot as cube. Several options are available via Attributes..
 - `shading=false`
 - `transparency=false`
 """
-@recipe(Bar3dPlot, yaxarray) do scene
+@recipe(PlotBars3d, yaxarray) do scene
     Attributes(;
         xname=:lon,
         yname=:lat,
         tname=:time,
+        timestep = nothing,
         varname=nothing,
         colormap=:Hiroshige,
         color=nothing,
@@ -320,7 +331,7 @@ Creates a plot as cube. Several options are available via Attributes..
     )
 end
 
-function Makie.plot!(p::Bar3dPlot{<:Tuple{<:YAXArray}})
+function Makie.plot!(p::PlotBars3d{<:Tuple{<:YAXArray}})
     dset = p[:yaxarray]
     xname = p[:xname][]
     yname = p[:yname][]
@@ -328,13 +339,12 @@ function Makie.plot!(p::Bar3dPlot{<:Tuple{<:YAXArray}})
     lon = @lift(getproperty($dset, xname).values)
     lat = @lift(getproperty($dset, yname).values)
 
-    if :time in propertynames(dset)
-        timestep = isnothing(p[:timestep]) ? @lift(first($dset.time.values)) : p[:timestep]
-        d = @lift($dset[time=Date($timestep), variable=String($varname)].data[:, :])
-    else
-        d = @lift(replace($dset[variable=String($varname)].data[:, :], missing => NaN))
-    end
-
+    #if :time in propertynames(dset)
+    timestep = isnothing(p.timestep[]) ? @lift(first($dset.time.values)) : p.timestep[]
+    d = @lift($dset[time=Date($timestep), variable=String($varname)].data[:, :])
+    #else
+    #    d = @lift(replace($dset[variable=String($varname)].data[:, :], missing => NaN))
+    #end
     δx = @lift(abs($lon[2] - $lon[1]))
     δy = @lift(abs($lat[2] - $lat[1]))
     ps = @lift([Point3f(i, j, 0.1*rand()) for i in $lon for j in $lat]) # fix z close to zero
