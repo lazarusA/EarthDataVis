@@ -411,9 +411,9 @@
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">EarthDataVis</span><span class="p">,</span><span class="w"> </span><span class="n">GLMakie</span><span class="w"></span>
 <span class="k">using</span><span class="w"> </span><span class="n">YAXArrays</span><span class="p">,</span><span class="w"> </span><span class="n">Dates</span><span class="p">,</span><span class="w"> </span><span class="n">Colors</span><span class="w"></span>
 <span class="n">GLMakie</span><span class="o">.</span><span class="n">activate!</span><span class="p">()</span><span class="w"></span>
-<span class="c"># Then, first let&#39;s start by creating some test data for EDV.</span><span class="w"></span>
-
-<span class="n">dates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Date</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">:</span><span class="n">Day</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span><span class="n">Date</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">31</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Then, first let's start by creating some test data for EDV.</p>
+<div class="highlight"><pre><span></span><code><span class="n">dates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Date</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">:</span><span class="n">Day</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span><span class="n">Date</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">31</span><span class="p">)</span><span class="w"></span>
 <span class="n">axlist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
 <span class="w">    </span><span class="n">RangeAxis</span><span class="p">(</span><span class="s">&quot;time&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">dates</span><span class="p">),</span><span class="w"></span>
 <span class="w">    </span><span class="n">RangeAxis</span><span class="p">(</span><span class="s">&quot;lon&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="o">=</span><span class="mi">15</span><span class="p">)),</span><span class="w"></span>
@@ -421,10 +421,6 @@
 <span class="w">    </span><span class="n">CategoricalAxis</span><span class="p">(</span><span class="s">&quot;Variable&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;var1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;var2&quot;</span><span class="p">])]</span><span class="w"></span>
 <span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"></span>
 <span class="n">dsarr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">YAXArray</span><span class="p">(</span><span class="n">axlist</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"></span>
-
-<span class="c"># And plotting our first cube is done with</span><span class="w"></span>
-
-<span class="c">#datacubeplot(dsarr; kind=:voxel, colormap=:linear_bmy_10_95_c71_n256)</span><span class="w"></span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>YAXArray with the following dimensions
 time                Axis with 31 Elements from 2021-01-01 to 2021-01-31
@@ -433,7 +429,11 @@ lat                 Axis with 20 Elements from 1.0 to 15.0
 Variable            Axis with 2 elements: var1 var2 
 Total size: 145.31 KB
 </code></pre></div>
-<p>using <code>datacubeplot</code> will generate a cube for one of the variables in <code>dsarr</code>. Note that different options are available. We will take a look at one of them.</p>
+<p>And plotting our first cube is done with</p>
+<div class="highlight"><pre><span></span><code><span class="n">plotcube</span><span class="p">(</span><span class="n">dsarr</span><span class="p">;</span><span class="w"> </span><span class="n">kind</span><span class="o">=</span><span class="ss">:voxel</span><span class="p">,</span><span class="w"> </span><span class="n">colormap</span><span class="o">=</span><span class="ss">:linear_bmy_10_95_c71_n256</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p><img alt="" src="../hqdaddp.png" /></p>
+<p>using <code>plotcube</code> will generate a cube for one of the variables in <code>dsarr</code>. Note that different options are available. We will take a look at one of them.</p>
 <hr />
 <p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p>
 
