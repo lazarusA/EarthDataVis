@@ -25,7 +25,7 @@ Creates a plot as cube. Several options are available via Attributes..
         tname=:time,
         varname=nothing,
         colormap=:Hiroshige,
-        #colorrange=(0, 1),
+        colorrange=nothing,
         color=nothing,
         levels=40,
         axvals=:counts, # be careful with your axis values, :vals is the only one showing the original data
@@ -59,18 +59,28 @@ function Makie.plot!(p::PlotCube{<:Tuple{<:YAXArray}})
     else
         error("not a known data method for your axis")
     end
-    d = @lift($dset[variable=String($varname)].data[:, :, :])
+
+    d = @lift($dset[variable=String($varname)])
+    axlist = @lift(YAXArrays.Cubes.caxes($d))
+    d = @lift(permutedims(replace($d.data[:,:,:], missing => NaN),
+            (YAXArrays.Axes.findAxis(:time, $axlist),YAXArrays.Axes.findAxis(:lon, $axlist),
+                YAXArrays.Axes.findAxis(:lat, $axlist)))
+            )
     ms = @lift(Vec3f($t[2] - $t[1], $y[2] - $y[1], $z[2] - $z[1]))
+    nanmn(x) = minimum(filter(!isnan,x))
+    nanmx(x) = maximum(filter(!isnan,x))
+    mn = @lift(nanmn($d))
+    mx = @lift(nanmx($d))
 
     if p[:kind][] == :contour
         contour!(p, t, y, z, d; colormap=p.colormap[], levels=p.levels[],
             shading=p.shading[], 
-            #colorrange = p.colorrange[],
+            colorrange = isnothing(p.colorrange[]) ? (mn[], mx[]) : p.colorrange[],
             transparency=p.transparency[]
         )
     elseif p[:kind][] == :volume
         volume!(p, t, y, z, d; colormap=p.colormap[], 
-            #colorrange = p.colorrange[]
+            colorrange = isnothing(p.colorrange[]) ? (mn[], mx[]) : p.colorrange[]
             )
     elseif p[:kind][] == :voxel
         ps = @lift([Point3f(i, j, k) for i in $t for j in $y for k in $z])
@@ -81,7 +91,7 @@ function Makie.plot!(p::PlotCube{<:Tuple{<:YAXArray}})
             markersize=isnothing(p.markersize[]) ? ms : p.markersize[],
             shading=p.shading[],
             transparency=p.transparency[],
-            #colorrange = p.colorrange[]
+            colorrange = isnothing(p.colorrange[]) ? (mn[], mx[]) : p.colorrange[]
         )
     end
     return p
@@ -229,7 +239,7 @@ function Makie.plot!(p::PlotSphere{<:Tuple{<:YAXArray}})
     lat = @lift(getproperty($dset, yname).values)
     #if :time in propertynames(dset)
     timestep = isnothing(p.timestep[]) ? @lift(first($dset.time.values)) : p.timestep[]
-    d = @lift($dset[time=Date($timestep), variable=String($varname)].data[:, :])
+    d = @lift(replace($dset[time=Date($timestep), variable=String($varname)].data[:, :],missing=>NaN))
     #else
     #    d = @lift(replace($dset[variable=String($varname)].data[:, :], missing => NaN))
     #end
