@@ -3,7 +3,7 @@ using YAXArrays
 using CairoMakie
 CairoMakie.activate!(type = "svg") #hide
 
-## Unique location
+# ## Unique location
 
 # Let's consider a simple case, with only one location
 
@@ -19,7 +19,8 @@ ds = YAXArray(axlist, data)
 
 d = ds.data[:,1,1]
 
-# Simple Plot
+# ## Simple Plot
+
 lines(d)
 
 # Adding labels
@@ -35,7 +36,7 @@ fig, ax, obj = lines(d;
 axislegend(ax)
 fig
 
-## Selecting one location
+# ## Selecting one location
 
 axlist = [
     RangeAxis("time", range(1, 20, length=20)),
@@ -60,7 +61,7 @@ fig, ax, obj = lines(d;
 axislegend(ax)
 fig
 
-## Selecting location with an extra axis
+# ## Selecting location with an extra axis
 
 axlist = [
     RangeAxis("other", 1:4),
