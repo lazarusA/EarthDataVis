@@ -105,5 +105,5 @@ nav:
   - "Overview": "index.md"
   - "Basics":
       - "Introduction": "examples/generated/tutorials/Basics/intro.md"
-      - "map 2d": "examples/generated/tutorials/mapplot/maps2d.md"
+      - "Plot time series": "examples/generated/tutorials/timeseries/timeseries.md"
  
